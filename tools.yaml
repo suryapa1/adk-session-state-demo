@@ -1,39 +1,50 @@
 # ============================================
-# SOURCES - Define your data connections
+# SOURCES
 # ============================================
 sources:
-  # Looker source (provides 25+ prebuilt tools automatically)
+  # Looker source - uses base_url (snake_case)
   my-looker-source:
     kind: looker
-    base_url: ${LOOKER_BASE_URL}
+    base_url: ${LOOKER_BASE_URL}  # snake_case!
     client_id: ${LOOKER_CLIENT_ID}
     client_secret: ${LOOKER_CLIENT_SECRET}
     verify_ssl: true
     timeout: 600s
   
-  # Hello World HTTP service (mock external API)
+  # HTTP source - uses baseUrl (camelCase)
   hello-service:
     kind: http
-    base_url: https://httpbin.org  # Public test API
+    baseUrl: https://httpbin.org  # camelCase!
     timeout: 30s
+    headers:
+      Content-Type: application/json
+  
+  # Another HTTP source example
+  ml-service:
+    kind: http
+    baseUrl: https://your-ml-api.com  # camelCase!
+    timeout: 30s
+    headers:
+      Authorization: Bearer ${ML_API_KEY}
+      Content-Type: application/json
 
 # ============================================
-# TOOLS - Define your custom tools
+# TOOLS
 # ============================================
 tools:
-  # Simple Hello World tool
+  # Simple GET request
   hello-world:
     kind: http-get
     source: hello-service
     endpoint: /get
-    description: Simple hello world tool that makes a GET request
+    description: Simple hello world GET request
     parameters:
       - name: message
         type: string
         description: Your message
         required: false
   
-  # Echo tool - POST request
+  # POST request with body
   echo-message:
     kind: http-post
     source: hello-service
@@ -42,34 +53,32 @@ tools:
     parameters:
       - name: text
         type: string
-        description: Text to echo back
+        description: Text to echo
         required: true
-      - name: repeat_count
-        type: integer
-        description: Number of times to repeat
+  
+  # Call external ML service
+  enhance-data:
+    kind: http-post
+    source: ml-service
+    endpoint: /predict
+    description: Enhance data with ML predictions
+    parameters:
+      - name: data
+        type: object
+        description: Input data for ML model
+        required: true
+      - name: model_type
+        type: string
+        description: Type of ML model
         required: false
 
 # ============================================
-# TOOLSETS - Group tools together
+# TOOLSETS
 # ============================================
 toolsets:
-  # All Looker prebuilt tools + custom tools
-  looker-with-hello:
+  all-tools:
     - looker-query
     - looker-get-models
-    - looker-get-explores
-    - looker-get-dimensions
-    - looker-get-measures
     - hello-world
     - echo-message
-  
-  # Just custom tools
-  hello-tools:
-    - hello-world
-    - echo-message
-  
-  # Just essential Looker tools
-  looker-essentials:
-    - looker-query
-    - looker-get-models
-    - looker-get-explores
+    - enhance-data
