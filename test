@@ -1,0 +1,106 @@
+# Your existing code
+def query_looker_dashboard(dashboard_id, filters=None):
+    # Your existing logic here
+    # Uses Looker client credentials
+    # Returns results
+    pass
+
+def custom_analytics_service(data, analysis_type):
+    # Your existing custom service logic
+    pass
+
+
+
+# This gets auto-generated from your Python type hints,
+# or you can explicitly define it:
+
+tools:
+  - name: query-looker-dashboard
+    description: Queries a Looker dashboard and returns data
+    inputSchema:
+      type: object
+      properties:
+        dashboard_id:
+          type: string
+          description: The Looker dashboard ID
+        filters:
+          type: object
+          description: Optional filters to apply
+      required:
+        - dashboard_id
+from fastmcp import FastMCP
+from typing import Optional, Dict, Any
+
+# Initialize MCP server
+mcp = FastMCP("looker-enhanced")
+
+# Tool 1: Wrap your existing Looker function
+@mcp.tool()
+def query_looker_dashboard(
+    dashboard_id: str,
+    filters: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """
+    Queries a Looker dashboard and returns visualization data.
+    
+    Args:
+        dashboard_id: The Looker dashboard ID to query
+        filters: Optional filters to apply to the dashboard query
+    """
+    # YOUR EXISTING CODE HERE - no changes needed!
+    # Just paste your existing implementation
+    pass
+
+# Tool 2: Wrap your custom analytics service
+@mcp.tool()
+def run_custom_analytics(
+    data: Dict[str, Any],
+    analysis_type: str,
+    threshold: Optional[float] = 0.5
+) -> Dict[str, Any]:
+    """
+    Runs custom analytics on provided data.
+    
+    Args:
+        data: The data to analyze
+        analysis_type: Type of analysis (trend, anomaly, forecast)
+        threshold: Optional threshold for analysis
+    """
+    # YOUR EXISTING CUSTOM SERVICE CODE HERE
+    pass
+
+# Tool 3: Combine Looker + Your custom service
+@mcp.tool()
+def looker_with_custom_enrichment(
+    dashboard_id: str,
+    enrichment_service_url: str
+) -> Dict[str, Any]:
+    """
+    Fetches Looker data and enriches with custom service.
+    """
+    # Call your existing Looker function
+    looker_data = query_looker_dashboard(dashboard_id)
+    
+    # Call your existing custom service
+    enriched = call_your_custom_service(looker_data, enrichment_service_url)
+    
+    return enriched
+
+
+--
+# src/looker_mcp_server.py (NEW FILE)
+from fastmcp import FastMCP
+from src.looker_service import (
+    your_existing_function1,
+    your_existing_function2,
+    your_custom_service_call
+)
+
+mcp = FastMCP("looker-tools")
+
+@mcp.tool()
+def tool_name_for_mcp(param1: str, param2: int):
+    """Tool description for Cline"""
+    # Call your existing function
+    return your_existing_function1(param1, param2)
+
