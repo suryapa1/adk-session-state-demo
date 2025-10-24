@@ -1,0 +1,75 @@
+# ============================================
+# SOURCES - Define your data connections
+# ============================================
+sources:
+  # Looker source (provides 25+ prebuilt tools automatically)
+  my-looker-source:
+    kind: looker
+    base_url: ${LOOKER_BASE_URL}
+    client_id: ${LOOKER_CLIENT_ID}
+    client_secret: ${LOOKER_CLIENT_SECRET}
+    verify_ssl: true
+    timeout: 600s
+  
+  # Hello World HTTP service (mock external API)
+  hello-service:
+    kind: http
+    base_url: https://httpbin.org  # Public test API
+    timeout: 30s
+
+# ============================================
+# TOOLS - Define your custom tools
+# ============================================
+tools:
+  # Simple Hello World tool
+  hello-world:
+    kind: http-get
+    source: hello-service
+    endpoint: /get
+    description: Simple hello world tool that makes a GET request
+    parameters:
+      - name: message
+        type: string
+        description: Your message
+        required: false
+  
+  # Echo tool - POST request
+  echo-message:
+    kind: http-post
+    source: hello-service
+    endpoint: /post
+    description: Echo back your message via POST
+    parameters:
+      - name: text
+        type: string
+        description: Text to echo back
+        required: true
+      - name: repeat_count
+        type: integer
+        description: Number of times to repeat
+        required: false
+
+# ============================================
+# TOOLSETS - Group tools together
+# ============================================
+toolsets:
+  # All Looker prebuilt tools + custom tools
+  looker-with-hello:
+    - looker-query
+    - looker-get-models
+    - looker-get-explores
+    - looker-get-dimensions
+    - looker-get-measures
+    - hello-world
+    - echo-message
+  
+  # Just custom tools
+  hello-tools:
+    - hello-world
+    - echo-message
+  
+  # Just essential Looker tools
+  looker-essentials:
+    - looker-query
+    - looker-get-models
+    - looker-get-explores
