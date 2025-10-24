@@ -1,3 +1,47 @@
+sources:
+  my-looker-source:
+    kind: looker
+    base_url: https://looker.example.com:19999
+    client_id: ${LOOKER_CLIENT_ID}
+    client_secret: ${LOOKER_CLIENT_SECRET}
+    verify_ssl: true
+  
+  external-api:
+    kind: http
+    baseUrl: https://httpbin.org
+    timeout: 30s
+
+tools:
+  test-get:
+    kind: http
+    method: GET
+    source: external-api
+    path: /get
+    description: Test GET request
+  
+  test-post:
+    kind: http
+    method: POST
+    source: external-api
+    path: /post
+    description: Test POST request
+    requestBody: |
+      {
+        "message": "{{.msg}}"
+      }
+    bodyParams:
+      - name: msg
+        type: string
+        description: Message to send
+
+toolsets:
+  test-toolset:
+    - looker-query
+    - test-get
+    - test-post
+
+
+
 # ============================================
 # SOURCES
 # ============================================
